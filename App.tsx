@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Text, StyleSheet, View } from "react-native";
-import { BtnMain } from "@app/components";
+import BtnMain from "@components/btnMain";
 
 export default function App() {
   // variables
