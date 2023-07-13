@@ -1,11 +1,27 @@
-import React, { useState } from "react";
-import { StyleSheet, View } from "react-native";
+import React, { useEffect, useState } from "react";
+import { Text, StyleSheet, View } from "react-native";
 import { BtnMain } from "@app/components";
 
 export default function App() {
   // variables
   const [seconds, setSeconds] = useState<number>(0);
   const [isActive, toggleTimer] = useState(false);
+
+  const getDoubleDigits = (number: number) => {
+    return number.toLocaleString("en-US", {
+      minimumIntegerDigits: 2,
+      useGrouping: false,
+    });
+  };
+
+  // setup
+  useEffect(() => {
+    let interval: NodeJS.Timer | null = null;
+    if (isActive) {
+      interval = setInterval(() => setSeconds((seconds) => seconds + 1), 1000);
+    }
+    return () => clearInterval(interval!);
+  }, [isActive, seconds]);
 
   // render
   return (
@@ -36,6 +52,19 @@ export default function App() {
         />
         <BtnMain name="RESET" onPress={() => setSeconds(0)} />
       </View>
+      <View style={styles.timeContainer}>
+        <Text
+          style={{
+            color: seconds === 0 ? "#FFFFFF" : isActive ? "#00FF00" : "#FF0000",
+            fontSize: 28,
+            fontWeight: "700",
+          }}
+        >
+          {getDoubleDigits(Math.floor((seconds / (60 * 60)) % 24))} :{" "}
+          {getDoubleDigits(Math.floor((seconds / 60) % 60))} :{" "}
+          {getDoubleDigits(seconds % 60)}
+        </Text>
+      </View>
     </View>
   );
 }
@@ -57,5 +86,11 @@ const styles = StyleSheet.create({
     width: "100%",
     flexDirection: "row",
     justifyContent: "space-between",
+  },
+  timeContainer: {
+    alignItems: "center",
+    width: "100%",
+    padding: 20,
+    backgroundColor: "#161b22",
   },
 });
